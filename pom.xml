@@ -82,7 +82,7 @@
     <rome-version>0.8</rome-version>
 
     <slf4j-version>1.6.1</slf4j-version>
-    <mqtt-client-version>1.6</mqtt-client-version>
+    <mqtt-client-version>1.7</mqtt-client-version>
 
     <jaxb-api-version>2.1</jaxb-api-version>
     <jaxb-version>2.1.6</jaxb-version>
@@ -97,7 +97,7 @@
     <xbean-version>3.4</xbean-version>
     <felix-version>1.0.0</felix-version>
 
-    <hawtdispatch-version>1.18</hawtdispatch-version>
+    <hawtdispatch-version>1.20-SNAPSHOT</hawtdispatch-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <stompjms-version>1.18</stompjms-version>
     
@@ -135,13 +135,15 @@
     
     <!-- osgi stuff -->
     <osgi-version>4.2.0</osgi-version>
-    <karaf-version>2.2.2</karaf-version>
+    <jansi-version>1.11</jansi-version>
+    <airline-version>0.6</airline-version>
     <features-maven-plugin-version>2.1.0</features-maven-plugin-version>
     
     <osgi.fragment.host>${project.groupId}.apollo-broker</osgi.fragment.host>
     <mvnplugins-version>1.15</mvnplugins-version>
     <qpid-proton-version>0.3.0-fuse-2</qpid-proton-version>
     <qpid-jms-version>0.20</qpid-jms-version>
+
   </properties>
 
   <prerequisites>

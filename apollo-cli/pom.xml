@@ -61,9 +61,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <groupId>io.airlift</groupId>
+      <artifactId>airline</artifactId>
+      <version>${airline-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>${jansi-version}</version>
     </dependency>
 
     <dependency>
@@ -84,15 +90,6 @@
       <artifactId>org.osgi.compendium</artifactId>
       <version>${osgi-version}</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.winsw</groupId>
-      <artifactId>winsw</artifactId>
-      <version>1.9</version>
-      <classifier>bin</classifier>
-      <type>exe</type>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -232,34 +229,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.2</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.sun.winsw</groupId>
-                  <artifactId>winsw</artifactId>
-                  <version>1.9</version>
-                  <classifier>bin</classifier>
-                  <type>exe</type>
-                  <outputDirectory>${basedir}/target/classes/org/apache/activemq/apollo/cli/commands/bin</outputDirectory>
-                  <destFileName>apollo-broker-service.exe</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-            
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

@@ -912,8 +912,13 @@ class StompProtocolHandler extends ProtocolHandler {
   override def on_transport_failure(error: IOException) = {
     if( !closed ) {
       suspend_read(waiting_on())
-      connection_log.info("Shutting connection '%s'  down due to: %s", security_context.remote_address, error)
-      disconnect(false)
+      error match {
+        case e:StompProtocolException =>
+          async_die(e.getMessage)
+        case _ =>
+          connection_log.info("Shutting connection '%s'  down due to: %s", security_context.remote_address, error)
+          disconnect(false)
+      }
     }
   }
 
@@ -950,17 +955,7 @@ class StompProtocolHandler extends ProtocolHandler {
       })
       trace("stomp protocol resources released")
 
-      waiting_on = ()=> {
-        val routes = producer_routes.values().flatMap { route =>
-          if( route.routing_items > 0 ) {
-            Some(route.dest+"("+route.routing_items+")")
-          } else {
-            None
-          }
-        }.mkString(", ")
-        "Delivery competition to: "+routes
-      }
-
+      waiting_on = ()=> { "Producer delivery competition" }
       on_routing_empty {
         producer_routes.values().foreach{ route=>
           host.dispatch_queue {
@@ -1412,6 +1407,14 @@ class StompProtocolHandler extends ProtocolHandler {
       }
     }
 
+    // Do we need to add an expires header?
+    for( ttl <- get( headers, TTL) ) {
+      if( get( headers, EXPIRES)==None ) {
+        val expiration = Broker.now + java.lang.Long.parseLong(ttl.toString)
+        rc ::= (EXPIRES -> ascii(expiration.toString))
+      }
+    }
+
     // Do we need to add the message id?
     if( get( headers, MESSAGE_ID) == None ) {
       message_id_counter += 1
@@ -1750,8 +1753,10 @@ class StompProtocolHandler extends ProtocolHandler {
     val txid = require_transaction_header(headers)
     val tx = transactions.get(txid).getOrElse(die("transaction not active: %d".format(txid)))
     tx.commit {
-      remove_tx_queue(txid)
-      send_receipt(headers)
+      queue {
+        remove_tx_queue(txid)
+        send_receipt(headers)
+      }
     }
   }
 
@@ -1828,7 +1833,7 @@ class StompProtocolHandler extends ProtocolHandler {
 
   def create_tx_queue(txid:AsciiBuffer):TransactionQueue = {
     if ( transactions.contains(txid) ) {
-      die("transaction allready started")
+      die("transaction already started")
     } else {
       val queue = new TransactionQueue
       transactions.put(txid, queue)
@@ -1841,7 +1846,7 @@ class StompProtocolHandler extends ProtocolHandler {
   }
 
   def remove_tx_queue(txid:AsciiBuffer):TransactionQueue = {
-    transactions.remove(txid).getOrElse(die("transaction not active: %d".format(txid)))
+    transactions.remove(txid).getOrElse(die("transaction not active: %s".format(txid)))
   }
 
 }

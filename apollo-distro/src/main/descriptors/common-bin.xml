@@ -19,6 +19,8 @@
 
   <dependencySets>
     <dependencySet>
+      <directoryMode>755</directoryMode>
+      <fileMode>644</fileMode>
       <outputDirectory>/lib</outputDirectory>
       <unpack>false</unpack>
       <useTransitiveDependencies>true</useTransitiveDependencies>
@@ -85,8 +87,10 @@
         <include>log4j:log4j</include>
         
         <!-- Implements the cli shell -->
-        <include>org.apache.karaf.shell:org.apache.karaf.shell.console</include>
-        
+        <include>io.airlift:airline</include>
+        <include>javax.inject:javax.inject</include>
+        <include>org.fusesource.jansi:jansi</include>
+
         <!-- for the AMQP protocol impl -->
         <include>org.apache.qpid:proton-api</include>
         <include>org.apache.qpid:proton</include>
@@ -105,6 +109,8 @@
     </dependencySet>
     
     <dependencySet>
+      <directoryMode>755</directoryMode>
+      <fileMode>644</fileMode>
       <outputDirectory>/lib</outputDirectory>
       <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
       <unpack>false</unpack>
@@ -117,9 +123,35 @@
   </dependencySets>
 
   <fileSets>
+    
+    <!-- Copy the unix scripts .. chmod 755 and exclude the windows bits-->
+    <fileSet>
+      <directory>src/main/release/bin</directory>
+      <outputDirectory>/bin</outputDirectory>
+      <lineEnding>unix</lineEnding>
+      <directoryMode>755</directoryMode>
+      <fileMode>0755</fileMode>
+      <excludes>
+        <exclude>*.cmd</exclude>
+      </excludes>
+    </fileSet>
+
+    <!-- Copy the windows scripts .. exclude the unix bits-->
+    <fileSet>
+      <directoryMode>755</directoryMode>
+      <fileMode>644</fileMode>
+      <directory>src/main/release/bin</directory>
+      <outputDirectory>/bin</outputDirectory>
+      <lineEnding>dos</lineEnding>
+      <includes>
+        <include>*.cmd</include>
+      </includes>
+    </fileSet>
 
     <!-- copy the website docs -->
     <fileSet>
+      <directoryMode>755</directoryMode>
+      <fileMode>644</fileMode>
       <directory>${basedir}/../apollo-website/target/sitegen/</directory>
       <outputDirectory>/docs/site</outputDirectory>
     </fileSet>

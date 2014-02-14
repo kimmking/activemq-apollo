@@ -47,12 +47,12 @@ class ApolloApplication extends Filter {
     if( !conf.exists() ) {
       val create = new BrokerCreate
       create.directory = base
-      create.base = base.getCanonicalPath
+      create.base = base
       create.broker_security_config = "<jmx admin_url='"+sc.getContextPath+"'/>"
       create.host_security_config = ""
       create.home = null
       println("Generating broker instance directory at: "+create.base)
-      create.run()
+      create.run(System.out, System.err)
     }
 
     if( !conf.exists ) {
